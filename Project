@@ -1,0 +1,76 @@
+int ign = 6;
+int start = 7;
+int strd = 0;
+int snb = 14;
+int sni = 15;
+int bobinas = 10;
+int inyectores = 11;
+int pt = 1;
+
+
+int math_floor(int number){
+  int max;
+  int min;
+  if (digitalRead(bobinas)== HIGH){
+    max=800;min=70;
+  }
+  if (digitalRead(inyectores)==HIGH){
+    max=800;min=150;
+  }
+  if (number<max and number>min){
+    return number;
+  }
+  else if(number > max){
+    return max;
+  }
+  else if(number < min){
+    return min;
+  }
+}
+
+void setup(){
+  Serial.begin(9600);
+  for(int i=4;i<=12;i++){
+    pinMode(i,INPUT);
+  }
+  for(int o=13;o<=16;o++){
+    pinMode(o,OUTPUT);
+  }
+}
+void loop(){
+  if (digitalRead(ign)==HIGH){
+    if (digitalRead(start)==HIGH){
+      strd=1;
+    }
+    if (strd==1){
+      if (digitalRead(bobinas)==HIGH){
+        delay(math_floor(analogRead(pt)));
+        digitalWrite(snb,HIGH);
+        delay(math_floor(analogRead(pt)));
+        digitalWrite(snb,HIGH);
+      }
+      if (digitalRead(inyectores)==HIGH){
+        delay(math_floor(analogRead(pt)));
+        digitalWrite(sni,HIGH);
+        delay(math_floor(analogRead(pt)));
+        digitalWrite(sni,HIGH);
+      }
+    }
+  }
+  if (digitalRead(ign) == LOW){
+    strd=0;
+  }
+  if (digitalRead(ign) == HIGH){
+    Serial.println("Contacto");
+  }
+  if (strd == 1 and digitalRead(ign)==HIGH){
+    Serial.println("Encendido!");
+  }
+  if(digitalRead(bobinas)==HIGH and strd==1){
+    Serial.println("Probador de bobinas");
+  }
+  else if (digitalRead(inyectores)==HIGH and strd==1){
+    Serial.println("Probador de Inyectores");
+  }
+  Serial.println(strd);
+}
